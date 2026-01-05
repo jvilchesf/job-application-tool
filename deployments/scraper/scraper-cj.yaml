@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scraper
+  namespace: job-application
+spec:
+  # Run every 6 hours
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: scraper
+              image: scraper-image
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
+              envFrom:
+                - configMapRef:
+                    name: scraper-config
+              env:
+                - name: APIFY_API_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: APIFY_API_TOKEN
+          restartPolicy: OnFailure

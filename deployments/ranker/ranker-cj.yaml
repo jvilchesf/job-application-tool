@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ranker
+  namespace: job-application
+spec:
+  # Run every 2 hours (after scraper)
+  schedule: "30 */2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ranker
+              image: ranker-image
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
+              envFrom:
+                - configMapRef:
+                    name: ranker-config
+              env:
+                - name: OPENAI_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: OPENAI_API_KEY
+          restartPolicy: OnFailure

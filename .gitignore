@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# UV package manager
+.uv/
+
+# Environment files (NEVER commit secrets!)
+.env
+*.env
+!.env.example
+settings.env
+!settings.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.bak
+
+# Logs
+logs/
+*.log
+
+# Output directories
+output/
+generated/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MongoDB data (if running locally)
+data/mongodb/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+MongoDB-RAG-Agent/

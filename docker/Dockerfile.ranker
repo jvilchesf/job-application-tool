@@ -1,0 +1,27 @@
+# Ranker Service Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir .
+
+# Copy shared module
+COPY src/shared /app/shared
+
+# Copy ranker service
+COPY src/ranker /app/ranker
+
+# Copy configuration files
+COPY config /app/config
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+CMD ["python", "-m", "ranker.main", "--daemon"]

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: applicant-config
+  namespace: job-application
+data:
+  # MongoDB
+  MONGODB_URI: "mongodb://mongodb:27017"
+  MONGODB_DATABASE: "job_application"
+
+  # Applicant settings (future)
+  APPLICANT_ENABLED: "false"
+
+  # Logging
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "json"

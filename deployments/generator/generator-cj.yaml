@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: generator
+  namespace: job-application
+spec:
+  # Run every 3 hours (after ranker)
+  schedule: "0 */3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: generator
+              image: generator-image
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "200m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "1000m"
+              envFrom:
+                - configMapRef:
+                    name: generator-config
+              env:
+                - name: OPENAI_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: OPENAI_API_KEY
+          restartPolicy: OnFailure

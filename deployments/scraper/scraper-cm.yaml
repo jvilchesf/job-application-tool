@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scraper-config
+  namespace: job-application
+data:
+  # MongoDB
+  MONGODB_URI: "mongodb://mongodb:27017"
+  MONGODB_DATABASE: "job_application"
+
+  # Apify
+  APIFY_ACTOR_ID: "KfYqwOhOXqkqO4DF8"
+  APIFY_BASE_URL: "https://api.apify.com/v2"
+
+  # Scraper settings
+  SCRAPER_SEARCH_URL: "https://www.linkedin.com/jobs/search/?keywords=Security%20Engineer&location=Switzerland"
+  SCRAPER_MAX_JOBS: "100"
+  SCRAPER_INTERVAL_HOURS: "6"
+
+  # Logging
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "json"

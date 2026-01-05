@@ -1,0 +1,187 @@
+# =============================================================================
+# Job Scoring Templates
+# =============================================================================
+# Templates define how jobs are scored based on keyword matching
+#
+# Scoring Logic:
+#   - Trigger keywords: High-value matches (default: 10 points each)
+#   - Support keywords: Supporting matches (default: 4 points each)
+#   - Title matches get 1.5x bonus
+#   - Job passes if: trigger_hits >= 2 AND total_score >= 30
+#
+# Each template represents a job category/role type you're targeting
+
+templates:
+  # ---------------------------------------------------------------------------
+  # Example: Cybersecurity Role Template
+  # ---------------------------------------------------------------------------
+  - name: "Cybersecurity"
+    description: "Information security, SOC, penetration testing roles"
+
+    # Trigger keywords: Must match at least 2 of these (high weight)
+    triggers:
+      - "cyber security"
+      - "cybersecurity"
+      - "information security"
+      - "security engineer"
+      - "security analyst"
+      - "SOC"
+      - "penetration testing"
+      - "SIEM"
+      - "incident response"
+      - "threat detection"
+
+    # Support keywords: Nice to have (lower weight)
+    support:
+      - "firewall"
+      - "vulnerability"
+      - "compliance"
+      - "NIST"
+      - "ISO 27001"
+      - "Azure Sentinel"
+      - "Splunk"
+      - "CrowdStrike"
+      - "EDR"
+      - "XDR"
+      - "malware"
+      - "forensics"
+
+    # CV customization hints for this template
+    summary_style: "security-focused"
+    priority_certs:
+      - "CISSP"
+      - "CEH"
+      - "CompTIA Security+"
+    core_competencies_focus:
+      - "Threat Detection"
+      - "Incident Response"
+      - "Security Architecture"
+
+  # ---------------------------------------------------------------------------
+  # Example: DevOps/Platform Engineering Template
+  # ---------------------------------------------------------------------------
+  - name: "DevOps"
+    description: "DevOps, SRE, Platform Engineering roles"
+
+    triggers:
+      - "devops"
+      - "SRE"
+      - "site reliability"
+      - "platform engineer"
+      - "infrastructure engineer"
+      - "kubernetes"
+      - "CI/CD"
+      - "cloud engineer"
+
+    support:
+      - "terraform"
+      - "ansible"
+      - "docker"
+      - "AWS"
+      - "Azure"
+      - "GCP"
+      - "GitOps"
+      - "ArgoCD"
+      - "Jenkins"
+      - "GitHub Actions"
+      - "monitoring"
+      - "observability"
+      - "Prometheus"
+      - "Grafana"
+
+    summary_style: "infrastructure-focused"
+    priority_certs:
+      - "AWS Solutions Architect"
+      - "CKA"
+      - "Azure Administrator"
+    core_competencies_focus:
+      - "Cloud Infrastructure"
+      - "Automation"
+      - "Container Orchestration"
+
+  # ---------------------------------------------------------------------------
+  # Example: Backend Development Template
+  # ---------------------------------------------------------------------------
+  - name: "Backend"
+    description: "Backend, API, and server-side development roles"
+
+    triggers:
+      - "backend"
+      - "back-end"
+      - "software engineer"
+      - "python developer"
+      - "API developer"
+      - "microservices"
+
+    support:
+      - "python"
+      - "golang"
+      - "java"
+      - "fastapi"
+      - "django"
+      - "REST"
+      - "GraphQL"
+      - "postgresql"
+      - "mongodb"
+      - "redis"
+      - "kafka"
+      - "rabbitmq"
+      - "async"
+      - "scalability"
+
+    summary_style: "development-focused"
+    priority_certs:
+      - "AWS Developer"
+      - "Python certification"
+    core_competencies_focus:
+      - "API Design"
+      - "System Design"
+      - "Database Optimization"
+
+# -----------------------------------------------------------------------------
+# Scoring Configuration
+# -----------------------------------------------------------------------------
+scoring:
+  # Points awarded per trigger keyword match
+  trigger_points: 10
+
+  # Points awarded per support keyword match
+  support_points: 4
+
+  # Multiplier for matches found in job title (vs description)
+  title_match_multiplier: 1.5
+
+  # Minimum requirements to pass
+  min_trigger_hits: 2
+  min_total_score: 30
+
+# -----------------------------------------------------------------------------
+# Language Detection Keywords
+# -----------------------------------------------------------------------------
+# Used to detect job description language for translation
+language_detection:
+  german:
+    - "das kannst du"
+    - "dein verantwortungsbereich"
+    - "deine fähigkeiten"
+    - "bewerbung"
+    - "stelle"
+    - "deutschkenntnisse"
+    - "unser angebot"
+    - "aufgaben"
+
+  french:
+    - "missions"
+    - "profil recherché"
+    - "candidature"
+    - "poste"
+    - "compétences"
+    - "expérience requise"
+
+  italian:
+    - "mansioni"
+    - "requisiti"
+    - "candidatura"
+    - "posizione"
+    - "competenze"
+    - "esperienza richiesta"

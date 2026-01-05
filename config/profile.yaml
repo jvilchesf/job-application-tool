@@ -1,0 +1,147 @@
+# =============================================================================
+# User Profile Configuration
+# =============================================================================
+# This file contains your professional profile for job matching and CV generation
+# Customize all fields to match your actual experience and preferences
+
+personal:
+  name: "Your Full Name"
+  email: "your.email@example.com"
+  phone: "+41 XX XXX XX XX"
+  location: "Zurich, Switzerland"
+  linkedin: "https://linkedin.com/in/yourprofile"
+  github: "https://github.com/yourusername"  # Optional
+
+# -----------------------------------------------------------------------------
+# Professional Summary
+# -----------------------------------------------------------------------------
+professional_profile: |
+  Experienced professional with X+ years in [your field].
+  Specialized in [key areas]. Strong background in [relevant technologies/skills].
+  Proven track record of [key achievements].
+
+# -----------------------------------------------------------------------------
+# Core Competencies (used for matching and CV generation)
+# -----------------------------------------------------------------------------
+core_competencies:
+  - "Skill 1"
+  - "Skill 2"
+  - "Skill 3"
+  - "Skill 4"
+  - "Skill 5"
+
+# -----------------------------------------------------------------------------
+# Technical Skills (grouped by category)
+# -----------------------------------------------------------------------------
+technical_skills:
+  programming_languages:
+    - "Python"
+    - "JavaScript"
+  frameworks:
+    - "FastAPI"
+    - "React"
+  databases:
+    - "PostgreSQL"
+    - "MongoDB"
+  cloud_platforms:
+    - "AWS"
+    - "Azure"
+  tools:
+    - "Docker"
+    - "Kubernetes"
+    - "Git"
+
+# -----------------------------------------------------------------------------
+# Certifications
+# -----------------------------------------------------------------------------
+certifications:
+  - name: "Certification Name"
+    issuer: "Issuing Organization"
+    date: "2024"
+    credential_id: "ABC123"  # Optional
+
+# -----------------------------------------------------------------------------
+# Work Experience
+# -----------------------------------------------------------------------------
+work_history:
+  - company: "Current Company"
+    title: "Your Title"
+    location: "City, Country"
+    start_date: "2022-01"
+    end_date: "Present"
+    achievements:
+      - "Achievement 1 with quantified results (e.g., reduced costs by 30%)"
+      - "Achievement 2 demonstrating impact"
+      - "Achievement 3 showing leadership or technical depth"
+    responsibilities:
+      - "Key responsibility 1"
+      - "Key responsibility 2"
+      - "Key responsibility 3"
+
+  - company: "Previous Company"
+    title: "Previous Title"
+    location: "City, Country"
+    start_date: "2019-06"
+    end_date: "2021-12"
+    achievements:
+      - "Achievement from previous role"
+    responsibilities:
+      - "Responsibility from previous role"
+
+# -----------------------------------------------------------------------------
+# Education
+# -----------------------------------------------------------------------------
+education:
+  - institution: "University Name"
+    degree: "Master of Science"
+    field: "Computer Science"
+    graduation_year: 2019
+    location: "City, Country"
+
+# -----------------------------------------------------------------------------
+# Languages
+# -----------------------------------------------------------------------------
+languages:
+  - language: "English"
+    level: "Native/Fluent"
+  - language: "German"
+    level: "Professional"
+  - language: "French"
+    level: "Intermediate"
+
+# -----------------------------------------------------------------------------
+# Job Preferences (used for filtering and ranking)
+# -----------------------------------------------------------------------------
+preferences:
+  desired_roles:
+    - "Software Engineer"
+    - "Backend Developer"
+    - "DevOps Engineer"
+
+  desired_locations:
+    - "Zurich"
+    - "Geneva"
+    - "Remote"
+
+  remote_preference: "hybrid"  # "remote", "hybrid", "onsite"
+
+  salary_expectations:
+    min: 120000
+    max: 180000
+    currency: "CHF"
+
+  contract_types:
+    - "permanent"
+    - "contract"
+
+  # Keywords that indicate a good match (used in ranking)
+  preferred_keywords:
+    - "Python"
+    - "cloud"
+    - "startup"
+
+  # Keywords that indicate a poor match (jobs with these get lower scores)
+  avoid_keywords:
+    - "junior"
+    - "intern"
+    - "sales"
