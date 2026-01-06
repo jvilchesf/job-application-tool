@@ -1,4 +1,4 @@
-# Scraper Service Dockerfile
+# Matcher Service Dockerfile
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -20,8 +20,8 @@ RUN uv pip install --system .
 # Copy shared module
 COPY src/shared /app/shared
 
-# Copy scraper service
-COPY src/scraper /app/scraper
+# Copy matcher service
+COPY src/matcher /app/matcher
 
 # Copy configuration files
 COPY config /app/config
@@ -30,4 +30,4 @@ ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
 # Run once (CronJob handles scheduling)
-CMD ["python", "-m", "scraper.main"]
+CMD ["python", "-m", "matcher.main"]

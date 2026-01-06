@@ -15,7 +15,7 @@ spec:
         spec:
           containers:
             - name: matcher
-              image: matcher-image
+              image: job-matcher:latest
               imagePullPolicy: IfNotPresent
               command: ["python", "-m", "matcher.main"]
               args: ["--limit", "50"]

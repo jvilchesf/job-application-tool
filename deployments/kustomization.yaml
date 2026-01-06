@@ -1,0 +1,31 @@
+# =============================================================================
+# Base Kustomization - Deploy All Services
+# =============================================================================
+# This deploys the scraper and matcher pipelines.
+#
+# Usage:
+#   kubectl apply -k deployments/
+#
+# Or deploy individual services:
+#   kubectl apply -k deployments/scraper/
+#   kubectl apply -k deployments/matcher/
+# =============================================================================
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: job-application
+
+resources:
+  # First pipeline: Scraper (LinkedIn → Database)
+  - scraper/
+
+  # Second pipeline: Matcher (LLM CV matching)
+  - matcher/
+
+  # Third pipeline: Generator (RenderCV + Email)
+  - generator/
+
+# Optional: Add more services as they're ready
+# - ranker/
+# - applicant/

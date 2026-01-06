@@ -4,16 +4,20 @@ metadata:
   name: generator-config
   namespace: job-application
 data:
-  # MongoDB
-  MONGODB_URI: "mongodb://mongodb:27017"
-  MONGODB_DATABASE: "job_application"
-
   # OpenAI
   OPENAI_MODEL: "gpt-4o"
   OPENAI_MODEL_MINI: "gpt-4o-mini"
 
   # Generator settings
   GENERATOR_OUTPUT_DIR: "/app/output"
+  GENERATOR_MIN_LLM_SCORE: "4"
+  GENERATOR_BATCH_SIZE: "10"
+  GENERATOR_CV_PATH: "/app/generator/cv/ernest_haeberli_cv.yaml"
+
+  # Email settings (Resend)
+  # Note: RESEND_API_KEY is in secrets
+  RESEND_FROM_EMAIL: "jobs@yourdomain.com"
+  RESEND_TO_EMAIL: "ernest@example.com"
 
   # Logging
   LOG_LEVEL: "INFO"

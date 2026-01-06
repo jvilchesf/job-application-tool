@@ -4,22 +4,24 @@ metadata:
   name: scraper
   namespace: job-application
 spec:
-  # Run every 6 hours
-  schedule: "0 */6 * * *"
+  # Run every 20 minutes for testing
+  schedule: "*/20 * * * *"
   concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 5
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      # Job timeout: 10 minutes
+      activeDeadlineSeconds: 600
       template:
         spec:
           containers:
             - name: scraper
-              image: scraper-image
+              image: job-scraper:latest
               imagePullPolicy: IfNotPresent
               resources:
                 requests:
-                  memory: "128Mi"
+                  memory: "256Mi"
                   cpu: "100m"
                 limits:
                   memory: "512Mi"
@@ -33,4 +35,9 @@ spec:
                     secretKeyRef:
                       name: job-application-secrets
                       key: APIFY_API_TOKEN
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: DATABASE_URL
           restartPolicy: OnFailure

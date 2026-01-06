@@ -59,6 +59,25 @@ class Settings(BaseSettings):
 
     # Generator settings
     generator_output_dir: str = Field(default="./output")
+    generator_min_llm_score: int = Field(
+        default=4, description="Minimum LLM score for CV generation (4=Good, 5=Excellent)"
+    )
+    generator_cv_path: Path = Field(
+        default=Path("src/generator/cv/ernest_haeberli_cv.yaml"),
+        description="Path to RenderCV base template"
+    )
+    generator_batch_size: int = Field(default=10, description="Jobs to process per batch")
+
+    # Email settings (Resend)
+    resend_api_key: SecretStr = Field(default=SecretStr(""))
+    resend_from_email: str = Field(
+        default="jobs@yourdomain.com",
+        description="Sender email address (must be verified in Resend)"
+    )
+    resend_to_email: str = Field(
+        default="ernest@example.com",
+        description="Recipient email for job applications"
+    )
 
     # Matcher settings
     cv_path: Path = Field(default=Path("src/matcher/cv/ernest_haeberli.yaml"))

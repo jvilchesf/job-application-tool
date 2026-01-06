@@ -258,6 +258,43 @@ class Database:
             )
             return [dict(row) for row in rows]
 
+    async def get_high_match_ungenerated_jobs(
+        self, min_score: int = 4, limit: int = 10
+    ) -> list[dict[str, Any]]:
+        """Get high-match jobs that haven't been generated yet."""
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT * FROM jobs
+                WHERE status = 'qualified'
+                  AND llm_match_score >= $1
+                  AND generated_at IS NULL
+                ORDER BY llm_match_score DESC, created_at DESC
+                LIMIT $2
+                """,
+                min_score,
+                limit,
+            )
+            return [dict(row) for row in rows]
+
+    async def update_job_generated(
+        self, job_id: str, status: str = "generated"
+    ) -> bool:
+        """Mark job as generated."""
+        async with self.pool.acquire() as conn:
+            result = await conn.execute(
+                """
+                UPDATE jobs SET
+                    status = $1,
+                    generated_at = NOW(),
+                    updated_at = NOW()
+                WHERE id = $2
+                """,
+                status,
+                uuid.UUID(job_id),
+            )
+            return result == "UPDATE 1"
+
     async def get_all_jobs(self, limit: int = 1000) -> list[dict[str, Any]]:
         """Get all jobs."""
         async with self.pool.acquire() as conn:

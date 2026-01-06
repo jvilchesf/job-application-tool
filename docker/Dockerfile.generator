@@ -1,22 +1,40 @@
 # Generator Service Dockerfile
+# Includes LaTeX for RenderCV PDF generation
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install system dependencies for WeasyPrint PDF generation
+# Install system dependencies:
+# - LaTeX for RenderCV (texlive packages)
+# - WeasyPrint dependencies (for cover letter PDF)
+# - Fonts for professional output
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    # LaTeX for RenderCV
+    texlive-latex-base \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    latexmk \
+    # WeasyPrint dependencies
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-0 \
     libffi-dev \
     shared-mime-info \
+    # Fonts
     fonts-liberation \
+    fonts-dejavu \
     && rm -rf /var/lib/apt/lists/*
 
+# Install uv for fast dependency management
+RUN pip install uv
+
+# Copy dependency files
+COPY pyproject.toml README.md ./
+
 # Install Python dependencies
-COPY pyproject.toml ./
-RUN pip install --no-cache-dir .
+RUN uv pip install --system .
 
 # Copy shared module
 COPY src/shared /app/shared
@@ -33,4 +51,5 @@ RUN mkdir -p /app/output
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "-m", "generator.main", "--daemon"]
+# Run once (CronJob handles scheduling)
+CMD ["python", "-m", "generator.main"]

@@ -1,6 +1,6 @@
 """
 Scraper Service - Main entry point.
-Fetches LinkedIn jobs via Apify and stores them in MongoDB.
+Fetches LinkedIn jobs via Apify and stores them in Supabase/PostgreSQL.
 """
 
 import asyncio
@@ -39,23 +39,35 @@ def setup_logging():
 
 
 async def scrape_jobs(
-    search_url: str | None = None,
+    job_titles: list[str] | None = None,
+    location: str | None = None,
     max_jobs: int | None = None,
+    jobs_per_title: int | None = None,
     use_last_run: bool = False,
 ) -> int:
     """
     Scrape LinkedIn jobs and store in database.
 
+    Args:
+        job_titles: List of job titles to search for
+        location: Location to search in (e.g., "Switzerland")
+        max_jobs: Maximum total jobs to scrape
+        jobs_per_title: Maximum jobs per title search
+        use_last_run: Use results from last Apify run instead of new scrape
+
     Returns:
         Number of new jobs inserted
     """
     settings = get_settings()
-    search_url = search_url or settings.scraper_search_url
+    job_titles = job_titles or settings.job_titles_list
+    location = location or settings.scraper_location
     max_jobs = max_jobs or settings.scraper_max_jobs
+    jobs_per_title = jobs_per_title or settings.scraper_jobs_per_title
 
-    logger.info(f"Starting job scraper")
-    logger.info(f"Search URL: {search_url}")
-    logger.info(f"Max jobs: {max_jobs}")
+    logger.info("Starting LinkedIn job scraper")
+    logger.info(f"Job titles: {job_titles}")
+    logger.info(f"Location: {location}")
+    logger.info(f"Max jobs: {max_jobs}, Per title: {jobs_per_title}")
 
     # Initialize clients
     db = Database()
@@ -70,41 +82,44 @@ async def scrape_jobs(
             logger.info("Fetching results from last Apify run")
             results = await apify.get_last_run_results()
         else:
-            logger.info("Starting new Apify scrape run")
-            results = await apify.run_actor(
-                search_url=search_url,
-                max_jobs=max_jobs,
+            logger.info("Starting new Apify LinkedIn scrape")
+            results = await apify.run_multi_title_search(
+                titles=job_titles,
+                location=location,
+                jobs_per_title=jobs_per_title,
+                max_total_jobs=max_jobs,
+                delay_between_searches=settings.scraper_delay_between_searches,
             )
 
-        logger.info(f"Retrieved {len(results)} jobs from Apify")
+        logger.info(f"Retrieved {len(results)} jobs from LinkedIn")
 
         # Store jobs in database
         new_count = 0
         updated_count = 0
+        error_count = 0
 
         for result in results:
             try:
-                job = result.to_job()
+                # Use to_db_dict for direct database insertion
+                job_dict = result.to_db_dict()
 
-                if not job.linkedin_id:
-                    logger.warning(f"Skipping job without ID: {job.title}")
+                if not job_dict.get("linkedin_id"):
+                    logger.warning(f"Skipping job without ID: {job_dict.get('title')}")
                     continue
-
-                job_dict = job.model_dump()
-                job_dict["status"] = "scraped"
 
                 job_id, was_inserted = await db.upsert_job(job_dict)
 
                 if was_inserted:
                     new_count += 1
-                    logger.debug(f"New job: {job.title} at {job.company}")
+                    logger.debug(f"New job: {job_dict['title']} at {job_dict['company']}")
                 else:
                     updated_count += 1
 
             except Exception as e:
+                error_count += 1
                 logger.error(f"Failed to store job: {e}")
 
-        logger.info(f"Scraping complete: {new_count} new, {updated_count} updated")
+        logger.info(f"Scraping complete: {new_count} new, {updated_count} updated, {error_count} errors")
         return new_count
 
     finally:
@@ -114,19 +129,30 @@ async def scrape_jobs(
 
 @click.command()
 @click.option(
-    "--search-url",
-    "-u",
-    help="LinkedIn search URL (overrides config)",
+    "--titles",
+    "-t",
+    help="Comma-separated job titles (e.g., 'CISO,IT Security Manager')",
+)
+@click.option(
+    "--location",
+    "-l",
+    help="Location to search in (e.g., 'Switzerland')",
 )
 @click.option(
     "--max-jobs",
     "-m",
     type=int,
-    help="Maximum jobs to scrape (overrides config)",
+    help="Maximum total jobs to scrape",
+)
+@click.option(
+    "--per-title",
+    "-p",
+    type=int,
+    help="Maximum jobs per title search",
 )
 @click.option(
     "--use-last-run",
-    "-l",
+    "-r",
     is_flag=True,
     help="Use results from last Apify run instead of starting new one",
 )
@@ -137,8 +163,10 @@ async def scrape_jobs(
     help="Run continuously at configured interval",
 )
 def main(
-    search_url: str | None,
+    titles: str | None,
+    location: str | None,
     max_jobs: int | None,
+    per_title: int | None,
     use_last_run: bool,
     daemon: bool,
 ):
@@ -146,13 +174,18 @@ def main(
     setup_logging()
     settings = get_settings()
 
+    # Parse titles from comma-separated string
+    job_titles = None
+    if titles:
+        job_titles = [t.strip() for t in titles.split(",") if t.strip()]
+
     if daemon:
         logger.info(f"Starting in daemon mode (interval: {settings.scraper_interval_hours}h)")
 
         async def run_daemon():
             while True:
                 try:
-                    await scrape_jobs(search_url, max_jobs, use_last_run=False)
+                    await scrape_jobs(job_titles, location, max_jobs, per_title, use_last_run=False)
                 except Exception as e:
                     logger.error(f"Scrape failed: {e}")
 
@@ -162,7 +195,7 @@ def main(
 
         asyncio.run(run_daemon())
     else:
-        new_jobs = asyncio.run(scrape_jobs(search_url, max_jobs, use_last_run))
+        new_jobs = asyncio.run(scrape_jobs(job_titles, location, max_jobs, per_title, use_last_run))
         click.echo(f"Scraped {new_jobs} new jobs")
 
 

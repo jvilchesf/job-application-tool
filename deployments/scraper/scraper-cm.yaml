@@ -4,19 +4,17 @@ metadata:
   name: scraper-config
   namespace: job-application
 data:
-  # MongoDB
-  MONGODB_URI: "mongodb://mongodb:27017"
-  MONGODB_DATABASE: "job_application"
-
-  # Apify
-  APIFY_ACTOR_ID: "KfYqwOhOXqkqO4DF8"
+  # Apify - LinkedIn Jobs Scraper
+  APIFY_ACTOR_ID: "bebity~linkedin-jobs-scraper"
   APIFY_BASE_URL: "https://api.apify.com/v2"
 
-  # Scraper settings
-  SCRAPER_SEARCH_URL: "https://www.linkedin.com/jobs/search/?keywords=Security%20Engineer&location=Switzerland"
-  SCRAPER_MAX_JOBS: "100"
-  SCRAPER_INTERVAL_HOURS: "6"
+  # Scraper settings - Multiple job titles
+  SCRAPER_JOB_TITLES: "CISO,IT Security Manager,OT Security,Solutions Architect,Enterprise Architect,Azure Infrastructure,IT Manager,Security Engineer"
+  SCRAPER_LOCATION: "Switzerland"
+  SCRAPER_MAX_JOBS: "50"
+  SCRAPER_JOBS_PER_TITLE: "10"
+  SCRAPER_DELAY_BETWEEN_SEARCHES: "2.0"
 
   # Logging
   LOG_LEVEL: "INFO"
-  LOG_FORMAT: "json"
+  LOG_FORMAT: "text"

@@ -1,0 +1,124 @@
+# =============================================================================
+# Ernest Haeberli - RenderCV Template
+# =============================================================================
+# This is the base CV template used for PDF generation.
+# The LLM will tailor this for each job application.
+
+cv:
+  name: Ernest Haeberli
+  location: Houston, Texas
+  email: ernest.haeberli@example.com
+  social_networks:
+    - network: LinkedIn
+      username: ernesthaeberli
+
+  sections:
+    summary:
+      - "Senior Cybersecurity Engineer with 11+ years of experience in information
+        security, network engineering, and IT infrastructure. Expert in implementing
+        security frameworks (ISO 27001, NIST 800-53/171, ITAR compliance), incident
+        response, and vulnerability management. Proven track record in designing and
+        securing enterprise networks, managing firewall infrastructure, and leading
+        security initiatives. Bilingual professional (English/Spanish)."
+
+    experience:
+      - company: Confidential
+        position: Senior Cybersecurity Engineer
+        location: Greater Houston, TX
+        start_date: 2014-04
+        end_date: present
+        highlights:
+          - "Oversee a team of cybersecurity analysts and action plans for incidents, phishing attacks, and vulnerabilities"
+          - "Solidified the organization's IT infrastructure ISO 27001, NIST 800-53, 171 & ITAR compliance"
+          - "Perform network and infrastructure assessments and investigate threats, possible exploitations, and malicious activities"
+          - "Develop and implement information and security standards, policies, procedures, and protocols"
+          - "Conduct vulnerability management and remediation across enterprise systems"
+          - "Configure firewalls, switches, edge routers, and multi-factor authentication"
+
+      - company: Rimkus Consulting Group, Inc.
+        position: Senior Network Security Engineer
+        location: Houston, TX
+        start_date: 2013-12
+        end_date: 2014-04
+        highlights:
+          - "Conducted phishing attacks, assessments, risk management & vulnerability assessment on client networks"
+          - "Executed multiple data center migrations, hardware procurement, network topology, and optimizing network performance"
+          - "Migrated Fortinet Firewall platform configuration to a Cisco ASA firewall configuration"
+          - "Configured and deployed DLP solutions, multi-factor authentication, and AWS infrastructure"
+          - "Oversaw a cross-functional team of Level 2 engineers"
+
+      - company: MHMRA of Harris County
+        position: Network Engineer III - Senior Network Architect
+        location: Houston, TX
+        start_date: 2013-10
+        end_date: 2013-12
+        highlights:
+          - "Configured, maintained, and upgraded firewalls, routers, switches, STP, VLANs, and network devices"
+          - "Administered QoS, AD, DNS, DHCP, GPOs, print management servers, and penetration tests"
+          - "Managed Cisco Prime for LAN infrastructure, Cisco ISE for AAA purposes"
+          - "Monitored SolarWinds for network performance"
+
+      - company: Repsol
+        position: Network Engineer
+        location: The Woodlands, TX
+        start_date: 2010-04
+        end_date: 2013-09
+        highlights:
+          - "Configured and installed servers, firewalls, routers, switches, VPNs, terminal servers, wireless access points"
+          - "Deployed patches for systems, OS images, and applications"
+          - "Created snapshots, VM backups, and recovery points"
+          - "Administered anti-virus software, VMs in Hyper-V, and built physical HP, Dell, and IBM servers"
+
+      - company: Vortech Inc.
+        position: Network Manager
+        location: Greater Orlando, FL
+        start_date: 2006-11
+        end_date: 2011-03
+        highlights:
+          - "Designed new network in Target datacenter in Seattle, creating VLANs and Firewall rules"
+          - "Configured load balancers and F5 firewalls"
+          - "Configured and deployed 200 CCIs (Cloud Computing Instance on Xen) and 600 Dedicated Servers"
+          - "Moved and migrated 824,000 websites on 800 servers; recreated DNS servers and mail servers"
+          - "Worked with ARIN in assignment of a /19 and an ASN for BGP"
+
+    certifications:
+      - label: Certified Network Defender (CND)
+        details: EC-Council, January 2021
+      - label: EC-Council Certified Incident Handler (ECIH)
+        details: EC-Council, January 2021
+      - label: Certified in Risk and Information Systems Control (CRISC)
+        details: ISACA, December 2020
+      - label: Certified Ethical Hacker (CEH)
+        details: EC-Council, December 2020
+      - label: Certified Information Security Manager (CISM)
+        details: ISACA, May 2020
+      - label: Certified Information Systems Auditor (CISA)
+        details: ISACA, February 2020
+
+    skills:
+      - label: Security Frameworks
+        details: ISO 27001, ISO 27002, NIST 800-53, NIST 800-171, ITAR, CIS Controls
+      - label: Security Tools
+        details: SIEM (Splunk, QRadar, Azure Sentinel), EDR/XDR, Nessus, Qualys, IDS/IPS
+      - label: Firewalls & Networking
+        details: Palo Alto, Cisco ASA/Firepower, Fortinet, Check Point, F5, VPN, BGP, VLANs
+      - label: Cloud Platforms
+        details: Microsoft Azure, AWS, Office 365 Security
+      - label: Infrastructure
+        details: Windows Server, Linux (RHEL, CentOS, Ubuntu), VMware, Hyper-V, Active Directory
+
+    education:
+      - institution: Universidad Pedagogica Experimental Libertador
+        area: Computer Science
+        location: Venezuela
+        start_date: "1991"
+        end_date: "1994"
+
+    languages:
+      - label: English
+        details: Native/Bilingual
+      - label: Spanish
+        details: Native/Bilingual
+
+design:
+  theme: classic

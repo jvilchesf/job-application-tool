@@ -4,25 +4,29 @@ metadata:
   name: generator
   namespace: job-application
 spec:
-  # Run every 3 hours (after ranker)
-  schedule: "0 */3 * * *"
+  # Run every 4 hours (after matcher)
+  schedule: "30 */4 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      # Job timeout: 30 minutes (LaTeX can be slow)
+      activeDeadlineSeconds: 1800
       template:
         spec:
           containers:
             - name: generator
-              image: generator-image
+              image: job-generator:latest
               imagePullPolicy: IfNotPresent
+              command: ["python", "-m", "generator.main"]
+              args: ["--limit", "10", "--min-score", "4"]
               resources:
                 requests:
-                  memory: "256Mi"
+                  memory: "512Mi"
                   cpu: "200m"
                 limits:
-                  memory: "1Gi"
+                  memory: "2Gi"
                   cpu: "1000m"
               envFrom:
                 - configMapRef:
@@ -33,4 +37,20 @@ spec:
                     secretKeyRef:
                       name: job-application-secrets
                       key: OPENAI_API_KEY
+                - name: RESEND_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: RESEND_API_KEY
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: DATABASE_URL
+              volumeMounts:
+                - name: output
+                  mountPath: /app/output
+          volumes:
+            - name: output
+              emptyDir: {}
           restartPolicy: OnFailure

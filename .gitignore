@@ -36,6 +36,11 @@ env/
 settings.env
 !settings.env.example
 
+# Kubernetes secrets (NEVER commit!)
+deployments/secrets.yaml
+**/secrets.yaml
+!**/secrets-template.yaml
+
 # IDE
 .idea/
 .vscode/

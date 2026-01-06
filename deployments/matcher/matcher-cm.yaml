@@ -13,8 +13,8 @@ data:
   MATCHER_BATCH_SIZE: "50"
   MATCHER_INTERVAL_SECONDS: "300"
 
-  # CV path (mounted via ConfigMap or embedded in image)
-  CV_PATH: "/app/src/matcher/cv/ernest_haeberli.yaml"
+  # CV path (embedded in Docker image)
+  CV_PATH: "/app/matcher/cv/ernest_haeberli.yaml"
 
   # Logging
   LOG_LEVEL: "INFO"
