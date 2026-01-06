@@ -9,33 +9,27 @@ dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
     "pydantic-ai>=0.1.0",
-
-    # Database
-    "motor>=3.7.0",
-    "pymongo>=4.0.0",
-
+    # Database (PostgreSQL/Supabase)
+    "asyncpg>=0.29.0",
+    "supabase>=2.0.0",
     # HTTP Client (for Apify API)
     "httpx>=0.27.0",
     "aiohttp>=3.9.0",
-
     # LLM Providers
     "openai>=1.0.0",
-
     # PDF Generation
     "reportlab>=4.0.0",
     "weasyprint>=62.0",
-
     # CLI & Logging
     "click>=8.0.0",
     "rich>=13.0.0",
     "loguru>=0.7.0",
-
     # Configuration
     "python-dotenv>=1.0.0",
     "pyyaml>=6.0.0",
-
     # Async utilities
     "aiofiles>=24.0.0",
+    "python-dateutil>=2.9.0.post0",
 ]
 
 [project.optional-dependencies]
@@ -48,6 +42,9 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/scraper", "src/ranker", "src/matcher", "src/generator", "src/applicant", "src/shared"]
 
 [tool.ruff]
 line-length = 100

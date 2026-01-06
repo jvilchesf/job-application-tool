@@ -39,27 +39,23 @@ class Job(BaseModel):
     url: str = Field(..., description="Job URL")
     title: str = Field(..., description="Job title")
     company: str = Field(..., description="Company name")
+    company_url: Optional[str] = Field(default=None, description="Company LinkedIn URL")
     location: str = Field(default="", description="Job location")
     description: str = Field(default="", description="Full job description")
-    description_html: Optional[str] = Field(default=None, description="HTML description")
 
-    # Extracted metadata
-    salary: Optional[str] = Field(default=None, description="Salary information")
-    employment_type: Optional[str] = Field(default=None, description="Full-time, Part-time, etc.")
-    experience_level: Optional[str] = Field(default=None, description="Entry, Mid, Senior, etc.")
-    posted_date: Optional[datetime] = Field(default=None, description="When job was posted")
+    # Metadata
+    posted_at: Optional[datetime] = Field(default=None, description="When job was posted")
+    posted_time: Optional[str] = Field(default=None, description="Original posted time string")
+    applications_count: Optional[str] = Field(default=None, description="Number of applicants")
     apply_url: Optional[str] = Field(default=None, description="Direct application URL")
 
-    # Ranking data
-    score: int = Field(default=0, description="Ranking score")
-    matched_triggers: list[str] = Field(default_factory=list, description="Matched trigger keywords")
-    matched_support: list[str] = Field(default_factory=list, description="Matched support keywords")
+    # LLM Matching (2nd pipeline)
+    llm_match_score: Optional[int] = Field(default=None, description="LLM match score (1-5)")
+    llm_match_reasoning: Optional[str] = Field(default=None, description="LLM match explanation")
+    matched_at: Optional[datetime] = Field(default=None, description="When LLM matching was done")
 
     # Status tracking
     status: JobStatus = Field(default=JobStatus.SCRAPED)
-    ranked_at: Optional[datetime] = Field(default=None)
-    generated_at: Optional[datetime] = Field(default=None)
-    applied_at: Optional[datetime] = Field(default=None)
 
     # Timestamps
     created_at: datetime = Field(default_factory=lambda: datetime.now())
@@ -97,23 +93,20 @@ class Application(BaseModel):
 
 
 class ApifyJobResult(BaseModel):
-    """Raw job data from Apify LinkedIn scraper."""
+    """Raw job data from Apify LinkedIn Jobs Scraper (bebity/linkedin-jobs-scraper)."""
 
-    # These fields match the Apify actor output
-    id: Optional[str] = Field(default=None, alias="jobId")
+    # These fields match the LinkedIn Jobs Scraper output
+    id: Optional[str] = None
     title: Optional[str] = None
     company: Optional[str] = Field(default=None, alias="companyName")
     company_url: Optional[str] = Field(default=None, alias="companyUrl")
     location: Optional[str] = None
     description: Optional[str] = None
-    description_html: Optional[str] = Field(default=None, alias="descriptionHtml")
     url: Optional[str] = Field(default=None, alias="jobUrl")
-    apply_url: Optional[str] = Field(default=None, alias="applyUrl")
     salary: Optional[str] = None
-    posted_at: Optional[str] = Field(default=None, alias="postedAt")
-    employment_type: Optional[str] = Field(default=None, alias="employmentType")
-    experience_level: Optional[str] = Field(default=None, alias="experienceLevel")
-    industries: Optional[list[str]] = None
+    published_at: Optional[str] = Field(default=None, alias="publishedAt")
+    posted_time: Optional[str] = Field(default=None, alias="postedTime")
+    applications_count: Optional[str] = Field(default=None, alias="applicationsCount")
 
     class Config:
         populate_by_name = True
@@ -122,10 +115,10 @@ class ApifyJobResult(BaseModel):
         """Convert Apify result to Job model."""
         from dateutil import parser
 
-        posted_date = None
-        if self.posted_at:
+        posted_at = None
+        if self.published_at:
             try:
-                posted_date = parser.parse(self.posted_at)
+                posted_at = parser.parse(self.published_at)
             except Exception:
                 pass
 
@@ -134,12 +127,37 @@ class ApifyJobResult(BaseModel):
             url=self.url or "",
             title=self.title or "",
             company=self.company or "",
+            company_url=self.company_url,
             location=self.location or "",
             description=self.description or "",
-            description_html=self.description_html,
-            salary=self.salary,
-            employment_type=self.employment_type,
-            experience_level=self.experience_level,
-            posted_date=posted_date,
-            apply_url=self.apply_url,
+            posted_at=posted_at,
+            posted_time=self.posted_time,
+            applications_count=self.applications_count,
+            apply_url=self.url,
         )
+
+    def to_db_dict(self) -> dict:
+        """Convert to dictionary for database insert."""
+        from dateutil import parser
+
+        posted_at = None
+        if self.published_at:
+            try:
+                posted_at = parser.parse(self.published_at)
+            except Exception:
+                pass
+
+        return {
+            "linkedin_id": self.id or "",
+            "url": self.url or "",
+            "title": self.title or "",
+            "company": self.company or "",
+            "company_url": self.company_url,
+            "location": self.location or "",
+            "description": self.description or "",
+            "posted_at": posted_at,
+            "posted_time": self.posted_time,
+            "applications_count": self.applications_count,
+            "apply_url": self.url,
+            "status": "scraped",
+        }

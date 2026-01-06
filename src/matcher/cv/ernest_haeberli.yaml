@@ -1,0 +1,296 @@
+# =============================================================================
+# Ernest Haeberli - CV for LLM Matching
+# =============================================================================
+# This CV is used by the Match Service to evaluate job-candidate fit
+
+personal:
+  name: "Ernest Haeberli"
+  headline: "Senior Network Engineer | Cybersecurity, Incident Response, IT Infrastructure"
+  location: "Houston, Texas"
+  languages:
+    - language: "English"
+      proficiency: "Native/Bilingual"
+    - language: "Spanish"
+      proficiency: "Native/Bilingual"
+
+# -----------------------------------------------------------------------------
+# Professional Summary
+# -----------------------------------------------------------------------------
+summary: |
+  Senior Cybersecurity Engineer with 11+ years of experience in information security,
+  network engineering, and IT infrastructure. Expert in implementing security frameworks
+  (ISO 27001, NIST 800-53/171, ITAR compliance), incident response, and vulnerability
+  management. Proven track record in designing and securing enterprise networks,
+  managing firewall infrastructure, and leading security initiatives. Bilingual
+  professional (English/Spanish) with strong technical and communication skills.
+
+# -----------------------------------------------------------------------------
+# Core Competencies (for matching priority)
+# -----------------------------------------------------------------------------
+core_competencies:
+  - "Cybersecurity & Information Security"
+  - "Network Security Architecture"
+  - "Incident Response & Forensics"
+  - "Vulnerability Management"
+  - "Firewall Administration (Palo Alto, Cisco, Fortinet)"
+  - "SIEM Implementation & Monitoring"
+  - "Compliance (ISO 27001, NIST 800-53/171, ITAR)"
+  - "Risk Assessment & Mitigation"
+  - "Security Operations Center (SOC)"
+  - "IT Infrastructure Management"
+
+# -----------------------------------------------------------------------------
+# Technical Skills
+# -----------------------------------------------------------------------------
+technical_skills:
+  security_frameworks:
+    - "ISO 27001"
+    - "ISO 27002"
+    - "NIST 800-53"
+    - "NIST 800-171"
+    - "ITAR"
+    - "CIS Controls"
+
+  security_tools:
+    - "SIEM (Splunk, QRadar, Azure Sentinel)"
+    - "EDR/XDR Solutions"
+    - "Vulnerability Scanners (Nessus, Qualys)"
+    - "IDS/IPS"
+    - "DLP Solutions"
+    - "Multi-factor Authentication"
+
+  firewalls_networking:
+    - "Palo Alto Networks"
+    - "Cisco ASA/Firepower"
+    - "Fortinet FortiGate"
+    - "Check Point"
+    - "F5 Load Balancers"
+    - "VPN Technologies"
+    - "Network Segmentation"
+    - "BGP"
+    - "VLANs"
+    - "STP"
+
+  cloud_platforms:
+    - "Microsoft Azure"
+    - "AWS"
+    - "Office 365 Security"
+
+  operating_systems:
+    - "Windows Server"
+    - "Linux (RHEL, CentOS, Ubuntu)"
+    - "Active Directory"
+    - "DNS/DHCP"
+    - "Group Policy (GPO)"
+
+  virtualization:
+    - "VMware"
+    - "Hyper-V"
+    - "Xen"
+
+  tools:
+    - "Cisco Prime"
+    - "Cisco ISE"
+    - "SolarWinds"
+    - "Apache"
+
+# -----------------------------------------------------------------------------
+# Certifications
+# -----------------------------------------------------------------------------
+certifications:
+  - name: "Certified Network Defender (CND)"
+    issuer: "EC-Council"
+    date: "January 2021"
+    credential_id: "ECC8342095761"
+
+  - name: "EC-Council Certified Incident Handler (ECIH)"
+    issuer: "EC-Council"
+    date: "January 2021"
+    credential_id: "ECC4793168025"
+
+  - name: "Certified in Risk and Information Systems Control (CRISC)"
+    issuer: "ISACA"
+    date: "December 2020"
+    credential_id: "2029533"
+
+  - name: "Certified Ethical Hacker (CEH)"
+    issuer: "EC-Council"
+    date: "December 2020"
+    credential_id: "ECC5289174063"
+
+  - name: "Certified Information Security Manager (CISM)"
+    issuer: "ISACA"
+    date: "May 2020"
+
+  - name: "Certified Information Systems Auditor (CISA)"
+    issuer: "ISACA"
+    date: "February 2020"
+
+# -----------------------------------------------------------------------------
+# Work Experience
+# -----------------------------------------------------------------------------
+experience:
+  - company: "Confidential"
+    title: "Senior Cybersecurity Engineer"
+    employment_type: "Full-time"
+    location: "Greater Houston, TX"
+    start_date: "April 2014"
+    end_date: "Present"
+    duration: "11+ years"
+    achievements:
+      - "Oversee a team of cybersecurity analysts and action plans for incidents, phishing attacks, and vulnerabilities"
+      - "Analyze, troubleshoot, debug, and diagnose all technical issues"
+      - "Solidified the organization's IT infrastructure ISO 27001, NIST 800-53, 171 & ITAR"
+      - "Develop, maintain, and communicate organizational vision"
+      - "Remain up-to-date with tools, techniques, and industry trends"
+    responsibilities:
+      - "Perform network and infrastructure assessments and investigate threats, possible exploitations, and malicious activities"
+      - "Develop and implement information and security standards, policies, procedures, and protocols"
+      - "Conduct vulnerability management and remediation"
+      - "Collaborated with the VP of Information Security to establish and maintain compliance with ISO 27001, ISO 27002, NIST 800-53, NIST 800-171 and ITAR policies and procedures"
+      - "Review network designs and conduct security audits"
+      - "Author assessment reports for audit and test findings"
+      - "Configure firewalls, switches, edge routers, and multi-factor authentication"
+    technologies:
+      - "ISO 27001"
+      - "NIST 800-53"
+      - "NIST 800-171"
+      - "ITAR"
+      - "Firewalls"
+      - "MFA"
+
+  - company: "Rimkus Consulting Group, Inc."
+    title: "Senior Network Security Engineer"
+    employment_type: "Full-time"
+    location: "Houston, TX"
+    start_date: "December 2013"
+    end_date: "April 2014"
+    duration: "5 months"
+    achievements:
+      - "Conducted phishing attacks, assessments, risk management & vulnerability assessment on client networks"
+      - "Served as the primary point of contact for escalated issues"
+      - "Executed multiple data center migrations, hardware procurement, network topology, and optimizing network performance"
+      - "Migrated Fortinet Firewall platform configuration to a Cisco ASA firewall configuration"
+      - "Facilitated on-site network equipment deployment and troubleshooting"
+    responsibilities:
+      - "Designed, implemented, and administered client-specific network infrastructure for data centers"
+      - "Initiated best practices for security, protocols & policies to ensure compliance with all regulations"
+      - "Configured and deployed DLP solutions, multi-factor authentication, and AWS infrastructure"
+      - "Oversaw a cross-functional team of Level 2 engineers, including day-to-day operations, projects, and deadlines"
+      - "Created Layer 1, 2 & 3 Visio diagrams, project maps & layouts"
+    technologies:
+      - "Cisco ASA"
+      - "Fortinet"
+      - "DLP"
+      - "AWS"
+      - "MFA"
+
+  - company: "MHMRA of Harris County"
+    title: "Network Engineer III - Senior Network Architect"
+    location: "Houston, TX"
+    start_date: "October 2013"
+    end_date: "December 2013"
+    duration: "3 months"
+    responsibilities:
+      - "Configured, maintained, and upgraded firewalls, routers, switches, STP, VLANs, and network devices"
+      - "Administered QoS, AD, DNS, DHCP, GPOs, print management servers, and penetration tests"
+      - "Documented infrastructure changes, security policies, and project layouts"
+      - "Identified and security adjustments and infrastructure improvements"
+      - "Managed Cisco Prime for LAN infrastructure, SNMP connectivity, Cisco ISE for AAA purposes"
+      - "Monitored SolarWinds for network performance while opening/closing ports for vendors, and administering tokens for remote connectivity"
+    technologies:
+      - "Cisco Prime"
+      - "Cisco ISE"
+      - "SolarWinds"
+      - "Active Directory"
+      - "VLANs"
+
+  - company: "Repsol"
+    title: "Network Engineer"
+    employment_type: "Full-time"
+    location: "The Woodlands, TX"
+    start_date: "April 2010"
+    end_date: "September 2013"
+    duration: "3 years 6 months"
+    responsibilities:
+      - "Configured and installed servers, firewalls, routers, switches, VPNs, terminal servers, wireless access points for client-specific needs and locations"
+      - "Deployed patches for systems, OS images, and applications"
+      - "Created snapshots, VM backups, and recovery points"
+      - "Administered anti-virus software, VMs in Hyper-V, and built physical HP, Dell, and IBM servers"
+      - "Deployed patches for clients' PCs and servers via continuum agent"
+    technologies:
+      - "Hyper-V"
+      - "VPN"
+      - "Firewalls"
+      - "Windows Server"
+
+  - company: "Vortech Inc."
+    title: "Network Manager"
+    location: "Greater Orlando, FL"
+    start_date: "November 2006"
+    end_date: "March 2011"
+    duration: "4 years 5 months"
+    achievements:
+      - "Designed new network in Target datacenter in Seattle Washington, creating New VLan, and Firewall rules"
+      - "Configured load balancers and F5 firewalls"
+      - "Configured and deployed 200 CCI's (Cloud Computing Instance on Xen) and 600 Dedicated Servers"
+      - "Moved and migrated 824,000 websites on 800 servers; recreated DNS servers and mail servers"
+    project_highlights:
+      - "Configured and deployed Load Balancers and Pix Firewall"
+      - "Configured and deployed Xen Servers and 200 VLans"
+      - "Designed Backup Solution for the New Clusters"
+      - "Migrated from MS Server 2k to MS Servers 2008 and from Red Hat 3.0 to CentOS 5.5 64bits"
+      - "Worked with ARIN in assignment of a /19 and an ASN for BGP in SEA"
+    technologies:
+      - "F5"
+      - "Xen"
+      - "BGP"
+      - "VLANs"
+      - "Linux"
+      - "Windows Server"
+
+# -----------------------------------------------------------------------------
+# Education
+# -----------------------------------------------------------------------------
+education:
+  - institution: "Universidad Pedagogica Experimental Libertador"
+    degree: "Computer Science"
+    location: "Venezuela"
+    years: "1991 - 1994"
+
+# -----------------------------------------------------------------------------
+# Matching Preferences (hints for LLM scoring)
+# -----------------------------------------------------------------------------
+matching_hints:
+  strong_match_indicators:
+    - "cybersecurity"
+    - "information security"
+    - "network security"
+    - "incident response"
+    - "SIEM"
+    - "firewall"
+    - "compliance"
+    - "NIST"
+    - "ISO 27001"
+    - "vulnerability management"
+    - "senior engineer"
+    - "security architect"
+    - "SOC"
+    - "penetration testing"
+    - "ethical hacking"
+
+  moderate_match_indicators:
+    - "network engineer"
+    - "IT security"
+    - "cloud security"
+    - "threat detection"
+    - "risk management"
+    - "security analyst"
+
+  weak_match_indicators:
+    - "software development"
+    - "web development"
+    - "data science"
+    - "junior position"
+    - "internship"
+    - "entry level"

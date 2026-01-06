@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: matcher
+  namespace: job-application
+spec:
+  # Run every 3 hours (after ranker)
+  schedule: "0 */3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: matcher
+              image: matcher-image
+              imagePullPolicy: IfNotPresent
+              command: ["python", "-m", "matcher.main"]
+              args: ["--limit", "50"]
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
+              envFrom:
+                - configMapRef:
+                    name: matcher-config
+              env:
+                - name: OPENAI_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: OPENAI_API_KEY
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: job-application-secrets
+                      key: DATABASE_URL
+          restartPolicy: OnFailure

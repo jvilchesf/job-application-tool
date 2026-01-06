@@ -1,63 +1,85 @@
 """
-MongoDB database connection and operations using Motor (async driver).
+Supabase/PostgreSQL database connection and operations using asyncpg.
 """
 
 from datetime import datetime, timezone
 from typing import Any, Optional
+import uuid
 
 from loguru import logger
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from pymongo import ASCENDING, DESCENDING, IndexModel
 
 from .config import Settings, get_settings
 
 
 class Database:
-    """Async MongoDB database wrapper."""
+    """Async PostgreSQL database wrapper for Supabase."""
 
     def __init__(self, settings: Optional[Settings] = None):
         self.settings = settings or get_settings()
-        self._client: Optional[AsyncIOMotorClient] = None
-        self._db: Optional[AsyncIOMotorDatabase] = None
+        self._pool = None
 
     async def connect(self) -> None:
-        """Establish database connection."""
-        if self._client is not None:
+        """Establish database connection pool."""
+        if self._pool is not None:
             return
 
-        logger.info(f"Connecting to MongoDB: {self.settings.mongodb_database}")
-        self._client = AsyncIOMotorClient(self.settings.mongodb_uri)
-        self._db = self._client[self.settings.mongodb_database]
+        import asyncpg
 
-        # Verify connection
-        await self._client.admin.command("ping")
-        logger.info("MongoDB connection established")
+        logger.info(f"Connecting to PostgreSQL database")
+        self._pool = await asyncpg.create_pool(
+            self.settings.database_url,
+            min_size=1,
+            max_size=10,
+        )
+        logger.info("PostgreSQL connection pool established")
 
     async def disconnect(self) -> None:
-        """Close database connection."""
-        if self._client:
-            self._client.close()
-            self._client = None
-            self._db = None
-            logger.info("MongoDB connection closed")
+        """Close database connection pool."""
+        if self._pool:
+            await self._pool.close()
+            self._pool = None
+            logger.info("PostgreSQL connection closed")
 
     @property
-    def db(self) -> AsyncIOMotorDatabase:
-        """Get database instance."""
-        if self._db is None:
+    def pool(self):
+        """Get connection pool."""
+        if self._pool is None:
             raise RuntimeError("Database not connected. Call connect() first.")
-        return self._db
+        return self._pool
 
     # -------------------------------------------------------------------------
-    # Jobs Collection
+    # Jobs Table
     # -------------------------------------------------------------------------
 
     async def insert_job(self, job: dict[str, Any]) -> str:
         """Insert a new job, returns job_id."""
-        job["created_at"] = datetime.now(timezone.utc)
-        job["updated_at"] = datetime.now(timezone.utc)
-        result = await self.db.jobs.insert_one(job)
-        return str(result.inserted_id)
+        job_id = str(uuid.uuid4())
+
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO jobs (
+                    id, linkedin_id, url, title, company, company_url, location,
+                    description, posted_at, posted_time, applications_count,
+                    apply_url, status
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+                """,
+                uuid.UUID(job_id),
+                job.get("linkedin_id"),
+                job.get("url"),
+                job.get("title"),
+                job.get("company"),
+                job.get("company_url"),
+                job.get("location"),
+                job.get("description"),
+                job.get("posted_at"),
+                job.get("posted_time"),
+                job.get("applications_count"),
+                job.get("apply_url"),
+                job.get("status", "scraped"),
+            )
+
+        return job_id
 
     async def upsert_job(self, job: dict[str, Any]) -> tuple[str, bool]:
         """
@@ -67,36 +89,93 @@ class Database:
         if not linkedin_id:
             raise ValueError("Job must have linkedin_id for upsert")
 
-        job["updated_at"] = datetime.now(timezone.utc)
+        async with self.pool.acquire() as conn:
+            # Check if exists
+            existing = await conn.fetchrow(
+                "SELECT id FROM jobs WHERE linkedin_id = $1",
+                linkedin_id
+            )
 
-        result = await self.db.jobs.update_one(
-            {"linkedin_id": linkedin_id},
-            {
-                "$set": job,
-                "$setOnInsert": {"created_at": datetime.now(timezone.utc)},
-            },
-            upsert=True,
-        )
-
-        if result.upserted_id:
-            return str(result.upserted_id), True
-
-        # Find existing document
-        existing = await self.db.jobs.find_one({"linkedin_id": linkedin_id})
-        return str(existing["_id"]), False
+            if existing:
+                # Update existing job
+                await conn.execute(
+                    """
+                    UPDATE jobs SET
+                        url = $2, title = $3, company = $4, company_url = $5,
+                        location = $6, description = $7, posted_at = $8,
+                        posted_time = $9, applications_count = $10,
+                        apply_url = $11, updated_at = NOW()
+                    WHERE linkedin_id = $1
+                    """,
+                    linkedin_id,
+                    job.get("url"),
+                    job.get("title"),
+                    job.get("company"),
+                    job.get("company_url"),
+                    job.get("location"),
+                    job.get("description"),
+                    job.get("posted_at"),
+                    job.get("posted_time"),
+                    job.get("applications_count"),
+                    job.get("apply_url"),
+                )
+                return str(existing["id"]), False
+            else:
+                # Insert new job
+                job_id = str(uuid.uuid4())
+                await conn.execute(
+                    """
+                    INSERT INTO jobs (
+                        id, linkedin_id, url, title, company, company_url, location,
+                        description, posted_at, posted_time, applications_count,
+                        apply_url, status
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+                    """,
+                    uuid.UUID(job_id),
+                    linkedin_id,
+                    job.get("url"),
+                    job.get("title"),
+                    job.get("company"),
+                    job.get("company_url"),
+                    job.get("location"),
+                    job.get("description"),
+                    job.get("posted_at"),
+                    job.get("posted_time"),
+                    job.get("applications_count"),
+                    job.get("apply_url"),
+                    job.get("status", "scraped"),
+                )
+                return job_id, True
 
     async def get_job(self, job_id: str) -> Optional[dict[str, Any]]:
         """Get job by ID."""
-        from bson import ObjectId
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT * FROM jobs WHERE id = $1",
+                uuid.UUID(job_id)
+            )
+            return dict(row) if row else None
 
-        return await self.db.jobs.find_one({"_id": ObjectId(job_id)})
+    async def get_job_by_linkedin_id(self, linkedin_id: str) -> Optional[dict[str, Any]]:
+        """Get job by LinkedIn ID."""
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT * FROM jobs WHERE linkedin_id = $1",
+                linkedin_id
+            )
+            return dict(row) if row else None
 
     async def get_jobs_by_status(
         self, status: str, limit: int = 100
     ) -> list[dict[str, Any]]:
         """Get jobs by status."""
-        cursor = self.db.jobs.find({"status": status}).limit(limit)
-        return await cursor.to_list(length=limit)
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT * FROM jobs WHERE status = $1 ORDER BY created_at DESC LIMIT $2",
+                status,
+                limit
+            )
+            return [dict(row) for row in rows]
 
     async def get_pending_jobs(self, limit: int = 100) -> list[dict[str, Any]]:
         """Get jobs pending ranking."""
@@ -110,105 +189,165 @@ class Database:
         self, job_id: str, status: str, extra_fields: Optional[dict] = None
     ) -> bool:
         """Update job status and optional extra fields."""
-        from bson import ObjectId
-
-        update = {"status": status, "updated_at": datetime.now(timezone.utc)}
-        if extra_fields:
-            update.update(extra_fields)
-
-        result = await self.db.jobs.update_one(
-            {"_id": ObjectId(job_id)}, {"$set": update}
-        )
-        return result.modified_count > 0
-
-    async def update_job_ranking(
-        self,
-        job_id: str,
-        score: int,
-        matched_triggers: list[str],
-        matched_support: list[str],
-        status: str,
-    ) -> bool:
-        """Update job with ranking results."""
-        from bson import ObjectId
-
-        result = await self.db.jobs.update_one(
-            {"_id": ObjectId(job_id)},
-            {
-                "$set": {
-                    "score": score,
-                    "matched_triggers": matched_triggers,
-                    "matched_support": matched_support,
-                    "status": status,
-                    "ranked_at": datetime.now(timezone.utc),
-                    "updated_at": datetime.now(timezone.utc),
-                }
-            },
-        )
-        return result.modified_count > 0
+        async with self.pool.acquire() as conn:
+            result = await conn.execute(
+                "UPDATE jobs SET status = $1, updated_at = NOW() WHERE id = $2",
+                status,
+                uuid.UUID(job_id)
+            )
+            return result == "UPDATE 1"
 
     # -------------------------------------------------------------------------
-    # Applications Collection
+    # Matcher Operations (LLM-based CV matching)
+    # -------------------------------------------------------------------------
+
+    async def update_job_match(
+        self,
+        job_id: str,
+        llm_match_score: int,
+        llm_match_reasoning: str,
+    ) -> bool:
+        """Update job with LLM match results."""
+        async with self.pool.acquire() as conn:
+            result = await conn.execute(
+                """
+                UPDATE jobs SET
+                    llm_match_score = $1,
+                    llm_match_reasoning = $2,
+                    matched_at = NOW(),
+                    updated_at = NOW()
+                WHERE id = $3
+                """,
+                llm_match_score,
+                llm_match_reasoning,
+                uuid.UUID(job_id),
+            )
+            return result == "UPDATE 1"
+
+    async def get_qualified_unmatched_jobs(
+        self, limit: int = 50
+    ) -> list[dict[str, Any]]:
+        """Get qualified jobs that haven't been LLM-matched yet."""
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT * FROM jobs
+                WHERE status = 'qualified' AND matched_at IS NULL
+                ORDER BY created_at DESC
+                LIMIT $1
+                """,
+                limit,
+            )
+            return [dict(row) for row in rows]
+
+    async def get_well_matched_jobs(
+        self, min_llm_score: int = 3, limit: int = 100
+    ) -> list[dict[str, Any]]:
+        """Get jobs with good LLM match scores for CV generation."""
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT * FROM jobs
+                WHERE status = 'qualified'
+                  AND llm_match_score >= $1
+                ORDER BY llm_match_score DESC, created_at DESC
+                LIMIT $2
+                """,
+                min_llm_score,
+                limit,
+            )
+            return [dict(row) for row in rows]
+
+    async def get_all_jobs(self, limit: int = 1000) -> list[dict[str, Any]]:
+        """Get all jobs."""
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT * FROM jobs ORDER BY created_at DESC LIMIT $1",
+                limit
+            )
+            return [dict(row) for row in rows]
+
+    async def count_jobs(self) -> int:
+        """Count total jobs."""
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow("SELECT COUNT(*) as count FROM jobs")
+            return row["count"]
+
+    async def count_jobs_by_status(self) -> dict[str, int]:
+        """Count jobs grouped by status."""
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT status, COUNT(*) as count FROM jobs GROUP BY status"
+            )
+            return {row["status"]: row["count"] for row in rows}
+
+    # -------------------------------------------------------------------------
+    # Applications Table
     # -------------------------------------------------------------------------
 
     async def insert_application(self, application: dict[str, Any]) -> str:
         """Insert a new application."""
-        application["created_at"] = datetime.now(timezone.utc)
-        application["updated_at"] = datetime.now(timezone.utc)
-        result = await self.db.applications.insert_one(application)
-        return str(result.inserted_id)
+        app_id = str(uuid.uuid4())
+
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO applications (
+                    id, job_id, job_title, company, resume_path, cover_letter_path,
+                    resume_content, cover_letter_content, status, notes
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                """,
+                uuid.UUID(app_id),
+                uuid.UUID(application.get("job_id")),
+                application.get("job_title"),
+                application.get("company"),
+                application.get("resume_path"),
+                application.get("cover_letter_path"),
+                application.get("resume_content"),
+                application.get("cover_letter_content"),
+                application.get("status", "pending"),
+                application.get("notes"),
+            )
+
+        return app_id
 
     async def get_application(self, application_id: str) -> Optional[dict[str, Any]]:
         """Get application by ID."""
-        from bson import ObjectId
-
-        return await self.db.applications.find_one({"_id": ObjectId(application_id)})
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT * FROM applications WHERE id = $1",
+                uuid.UUID(application_id)
+            )
+            return dict(row) if row else None
 
     async def get_applications_by_job(self, job_id: str) -> list[dict[str, Any]]:
         """Get all applications for a job."""
-        cursor = self.db.applications.find({"job_id": job_id})
-        return await cursor.to_list(length=100)
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT * FROM applications WHERE job_id = $1",
+                uuid.UUID(job_id)
+            )
+            return [dict(row) for row in rows]
 
     async def update_application_status(
         self, application_id: str, status: str, extra_fields: Optional[dict] = None
     ) -> bool:
         """Update application status."""
-        from bson import ObjectId
-
-        update = {"status": status, "updated_at": datetime.now(timezone.utc)}
-        if extra_fields:
-            update.update(extra_fields)
-
-        result = await self.db.applications.update_one(
-            {"_id": ObjectId(application_id)}, {"$set": update}
-        )
-        return result.modified_count > 0
+        async with self.pool.acquire() as conn:
+            result = await conn.execute(
+                "UPDATE applications SET status = $1, updated_at = NOW() WHERE id = $2",
+                status,
+                uuid.UUID(application_id)
+            )
+            return result == "UPDATE 1"
 
     # -------------------------------------------------------------------------
-    # Index Setup
+    # Index Setup (no-op for PostgreSQL - indexes are in migration)
     # -------------------------------------------------------------------------
 
     async def ensure_indexes(self) -> None:
-        """Create database indexes."""
-        # Jobs indexes
-        job_indexes = [
-            IndexModel([("linkedin_id", ASCENDING)], unique=True),
-            IndexModel([("status", ASCENDING)]),
-            IndexModel([("score", DESCENDING)]),
-            IndexModel([("created_at", DESCENDING)]),
-            IndexModel([("company", ASCENDING)]),
-        ]
-        await self.db.jobs.create_indexes(job_indexes)
-
-        # Applications indexes
-        app_indexes = [
-            IndexModel([("job_id", ASCENDING)]),
-            IndexModel([("status", ASCENDING)]),
-            IndexModel([("created_at", DESCENDING)]),
-        ]
-        await self.db.applications.create_indexes(app_indexes)
-
-        logger.info("Database indexes created")
+        """Indexes are created via SQL migration."""
+        logger.info("Indexes managed via SQL migrations")
 
 
 # Global database instance
