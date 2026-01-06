@@ -10,6 +10,7 @@ import os
 import sys
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -74,11 +75,15 @@ class UnifiedPipeline:
         min_score: int = 4,
         skip_email: bool = False,
         dry_run: bool = False,
+        max_days_old: int = 7,
+        date_posted: str = "past-week",
     ):
         self.settings = settings or get_settings()
         self.min_score = min_score
         self.skip_email = skip_email
         self.dry_run = dry_run
+        self.max_days_old = max_days_old
+        self.date_posted = date_posted
 
         # Components (initialized lazily)
         self._db: Optional[Database] = None
@@ -150,6 +155,27 @@ class UnifiedPipeline:
             if existing:
                 logger.debug(f"Skipping existing job: {title} at {company}")
                 return None
+
+            # Step 1.5: Check job freshness
+            posted_at = job_data.get("posted_at")
+            if posted_at and self.max_days_old > 0:
+                if isinstance(posted_at, str):
+                    from dateutil import parser
+                    try:
+                        posted_at = parser.parse(posted_at)
+                    except Exception:
+                        posted_at = None
+
+                if posted_at:
+                    # Make sure posted_at is timezone-aware
+                    if posted_at.tzinfo is None:
+                        posted_at = posted_at.replace(tzinfo=timezone.utc)
+
+                    cutoff_date = datetime.now(timezone.utc) - timedelta(days=self.max_days_old)
+                    if posted_at < cutoff_date:
+                        days_old = (datetime.now(timezone.utc) - posted_at).days
+                        logger.debug(f"Skipping old job ({days_old} days old): {title} at {company}")
+                        return None
 
             stats.jobs_new += 1
 
@@ -356,6 +382,7 @@ class UnifiedPipeline:
                     location=location,
                     max_jobs=max_jobs_per_title,
                     timeout_secs=300,
+                    date_posted=self.date_posted,
                 )
 
                 stats.jobs_scraped += len(jobs)

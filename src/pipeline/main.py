@@ -106,6 +106,19 @@ def setup_logging():
     default=None,
     help="Location to search (overrides settings)",
 )
+@click.option(
+    "--date-posted",
+    "-p",
+    type=click.Choice(["past-24h", "past-week", "past-month", "any"]),
+    default="past-week",
+    help="Only get jobs posted within this time period (default: past-week)",
+)
+@click.option(
+    "--max-days-old",
+    type=int,
+    default=7,
+    help="Skip jobs older than this many days (default: 7, 0 to disable)",
+)
 def main(
     daemon: bool,
     interval: int,
@@ -115,6 +128,8 @@ def main(
     dry_run: bool,
     titles: str,
     location: str,
+    date_posted: str,
+    max_days_old: int,
 ):
     """
     Unified Pipeline - Real-time job application system.
@@ -148,11 +163,18 @@ def main(
         job_titles = [t.strip() for t in titles.split(",")]
         logger.info(f"Using custom job titles: {job_titles}")
 
+    # Convert "any" to None for date filter
+    date_filter = None if date_posted == "any" else date_posted
+
+    logger.info(f"Date filter: {date_posted}, Max days old: {max_days_old}")
+
     async def run():
         pipeline = UnifiedPipeline(
             min_score=min_score,
             skip_email=skip_email,
             dry_run=dry_run,
+            max_days_old=max_days_old,
+            date_posted=date_filter,
         )
 
         try:

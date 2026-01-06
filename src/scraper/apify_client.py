@@ -47,6 +47,7 @@ class ApifyClient:
         location: str,
         max_jobs: int = 100,
         timeout_secs: int = 300,
+        date_posted: str = "past-week",
     ) -> list[ApifyJobResult]:
         """
         Run the LinkedIn Jobs Scraper actor synchronously and return results directly.
@@ -57,6 +58,7 @@ class ApifyClient:
             location: Location to search in (e.g., "Switzerland")
             max_jobs: Maximum number of jobs to scrape (uses 'rows' parameter)
             timeout_secs: Timeout in seconds
+            date_posted: Date filter - "past-24h", "past-week", "past-month", or None for all
 
         Returns:
             List of job results
@@ -70,6 +72,18 @@ class ApifyClient:
             "location": location,
             "rows": max_jobs,
         }
+
+        # Add date filter if specified (LinkedIn uses f_TPR parameter)
+        # r86400 = past 24 hours, r604800 = past week, r2592000 = past month
+        if date_posted:
+            date_filters = {
+                "past-24h": "r86400",
+                "past-week": "r604800",
+                "past-month": "r2592000",
+            }
+            if date_posted in date_filters:
+                actor_input["publishedAt"] = date_filters[date_posted]
+                logger.info(f"Date filter: {date_posted}")
 
         # Use sync endpoint for simpler operation
         sync_url = f"{self.base_url}/acts/{self.actor_id}/run-sync-get-dataset-items"
