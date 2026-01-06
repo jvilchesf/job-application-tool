@@ -76,6 +76,7 @@ class UnifiedPipeline:
         skip_email: bool = False,
         dry_run: bool = False,
         max_days_old: int = 7,
+        max_hours_old: int = 0,
         date_posted: str = "past-week",
     ):
         self.settings = settings or get_settings()
@@ -83,6 +84,7 @@ class UnifiedPipeline:
         self.skip_email = skip_email
         self.dry_run = dry_run
         self.max_days_old = max_days_old
+        self.max_hours_old = max_hours_old
         self.date_posted = date_posted
 
         # Components (initialized lazily)
@@ -158,7 +160,7 @@ class UnifiedPipeline:
 
             # Step 1.5: Check job freshness
             posted_at = job_data.get("posted_at")
-            if posted_at and self.max_days_old > 0:
+            if posted_at and (self.max_days_old > 0 or self.max_hours_old > 0):
                 if isinstance(posted_at, str):
                     from dateutil import parser
                     try:
@@ -171,11 +173,22 @@ class UnifiedPipeline:
                     if posted_at.tzinfo is None:
                         posted_at = posted_at.replace(tzinfo=timezone.utc)
 
-                    cutoff_date = datetime.now(timezone.utc) - timedelta(days=self.max_days_old)
-                    if posted_at < cutoff_date:
-                        days_old = (datetime.now(timezone.utc) - posted_at).days
-                        logger.debug(f"Skipping old job ({days_old} days old): {title} at {company}")
-                        return None
+                    now = datetime.now(timezone.utc)
+
+                    # Check hours filter first (more restrictive)
+                    if self.max_hours_old > 0:
+                        cutoff_time = now - timedelta(hours=self.max_hours_old)
+                        if posted_at < cutoff_time:
+                            hours_old = (now - posted_at).total_seconds() / 3600
+                            logger.debug(f"Skipping old job ({hours_old:.1f} hours old): {title} at {company}")
+                            return None
+                    # Fall back to days filter
+                    elif self.max_days_old > 0:
+                        cutoff_date = now - timedelta(days=self.max_days_old)
+                        if posted_at < cutoff_date:
+                            days_old = (now - posted_at).days
+                            logger.debug(f"Skipping old job ({days_old} days old): {title} at {company}")
+                            return None
 
             stats.jobs_new += 1
 
@@ -364,7 +377,7 @@ class UnifiedPipeline:
 
         # Use defaults from settings
         if job_titles is None:
-            job_titles = self.settings.scraper_job_titles
+            job_titles = self.settings.job_titles_list
         if location is None:
             location = self.settings.scraper_location
 

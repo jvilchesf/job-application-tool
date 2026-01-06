@@ -104,11 +104,18 @@ cv:
         details: "Cisco Network Security, Firewall Configuration, Network Segmentation, VPN Security, Network Protocol Analysis"
 
     education:
+      - institution: University of Houston
+        area: Computer Science with Security Specialization
+        degree: MS
+        location: Houston, TX
+        start_date: 1999
+        end_date: 2001
       - institution: UPEL
         area: Management Information Systems & Security
-        degree: Bachelor's
-        start_date: "1991"
-        end_date: "1995"
+        degree: BS
+        location: Venezuela
+        start_date: 1991
+        end_date: 1995
 
     languages:
       - label: English

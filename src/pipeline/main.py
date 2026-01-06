@@ -119,6 +119,12 @@ def setup_logging():
     default=7,
     help="Skip jobs older than this many days (default: 7, 0 to disable)",
 )
+@click.option(
+    "--max-hours-old",
+    type=int,
+    default=0,
+    help="Skip jobs older than this many hours (default: 0=disabled, use for hourly runs)",
+)
 def main(
     daemon: bool,
     interval: int,
@@ -130,6 +136,7 @@ def main(
     location: str,
     date_posted: str,
     max_days_old: int,
+    max_hours_old: int,
 ):
     """
     Unified Pipeline - Real-time job application system.
@@ -166,7 +173,10 @@ def main(
     # Convert "any" to None for date filter
     date_filter = None if date_posted == "any" else date_posted
 
-    logger.info(f"Date filter: {date_posted}, Max days old: {max_days_old}")
+    if max_hours_old > 0:
+        logger.info(f"Date filter: {date_posted}, Max hours old: {max_hours_old}")
+    else:
+        logger.info(f"Date filter: {date_posted}, Max days old: {max_days_old}")
 
     async def run():
         pipeline = UnifiedPipeline(
@@ -174,6 +184,7 @@ def main(
             skip_email=skip_email,
             dry_run=dry_run,
             max_days_old=max_days_old,
+            max_hours_old=max_hours_old,
             date_posted=date_filter,
         )
 

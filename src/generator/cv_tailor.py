@@ -369,6 +369,36 @@ Output ONLY the new summary text, nothing else."""
             base_cv["cv"]["sections"] = sections
             return base_cv
 
+    async def _detect_language(self, text: str) -> tuple[str, str]:
+        """
+        Detect the language of the text.
+        Returns (language_code, language_name) e.g., ("de", "German")
+        """
+        # Quick heuristic detection based on common words
+        text_lower = text.lower()
+
+        # German indicators
+        german_words = ["und", "der", "die", "das", "für", "mit", "wir", "sie", "sind", "haben", "werden", "ihre", "unser", "arbeit", "erfahrung", "kenntnisse", "aufgaben", "anforderungen"]
+        german_count = sum(1 for word in german_words if f" {word} " in f" {text_lower} ")
+
+        # French indicators
+        french_words = ["et", "le", "la", "les", "pour", "avec", "nous", "vous", "sont", "avoir", "être", "notre", "votre", "travail", "expérience", "compétences", "missions", "profil"]
+        french_count = sum(1 for word in french_words if f" {word} " in f" {text_lower} ")
+
+        # Italian indicators
+        italian_words = ["e", "il", "la", "per", "con", "noi", "loro", "sono", "avere", "essere", "nostro", "lavoro", "esperienza", "competenze", "requisiti"]
+        italian_count = sum(1 for word in italian_words if f" {word} " in f" {text_lower} ")
+
+        # Determine language
+        if german_count >= 5:
+            return ("de", "German")
+        elif french_count >= 5:
+            return ("fr", "French")
+        elif italian_count >= 4:
+            return ("it", "Italian")
+        else:
+            return ("en", "English")
+
     async def generate_cover_letter(
         self,
         job_title: str,
@@ -380,11 +410,23 @@ Output ONLY the new summary text, nothing else."""
         """
         Generate a cover letter for the job.
         Uses the prompt pattern from the user's tips.
+        Detects job language and adds language learning note if not English.
         """
         base_cv = self.load_base_cv()
         cv_content = base_cv.get("cv", {})
         name = cv_content.get("name", "")
         sections = cv_content.get("sections", {})
+
+        # Detect job posting language
+        lang_code, lang_name = await self._detect_language(job_description)
+        language_note = ""
+        if lang_code != "en":
+            language_note = f"""
+IMPORTANT: The job posting is in {lang_name}.
+- Write the cover letter in ENGLISH (not {lang_name})
+- Include a sentence mentioning that the candidate is 100% committed to learning {lang_name} and is already taking steps to become proficient
+- The candidate already speaks English and Spanish fluently"""
+            logger.info(f"Job posting detected as {lang_name} - will add language learning note")
 
         # Build resume context
         summary = sections.get("summary", [""])[0] if sections.get("summary") else ""
@@ -415,6 +457,7 @@ Key Experience:
 {experience_context}
 
 ATS Keywords to incorporate: {', '.join(ats_keywords[:10])}
+{language_note}
 
 Rules:
 - Use 2 specific achievements from the experience
