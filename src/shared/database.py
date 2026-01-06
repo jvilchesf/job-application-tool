@@ -51,9 +51,11 @@ class Database:
     # Jobs Table
     # -------------------------------------------------------------------------
 
-    async def insert_job(self, job: dict[str, Any]) -> str:
-        """Insert a new job, returns job_id."""
+    async def insert_job(self, job: dict[str, Any]) -> dict[str, Any]:
+        """Insert a new job, returns full job record."""
         job_id = str(uuid.uuid4())
+        # Support both linkedin_id and linkedin_job_id (for backward compatibility)
+        linkedin_id = job.get("linkedin_id") or job.get("linkedin_job_id")
 
         async with self.pool.acquire() as conn:
             await conn.execute(
@@ -65,7 +67,7 @@ class Database:
                 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
                 """,
                 uuid.UUID(job_id),
-                job.get("linkedin_id"),
+                linkedin_id,
                 job.get("url"),
                 job.get("title"),
                 job.get("company"),
@@ -79,7 +81,7 @@ class Database:
                 job.get("status", "scraped"),
             )
 
-        return job_id
+        return {"id": job_id, **job}
 
     async def upsert_job(self, job: dict[str, Any]) -> tuple[str, bool]:
         """

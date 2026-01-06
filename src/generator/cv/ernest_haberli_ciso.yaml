@@ -1,0 +1,126 @@
+# =============================================================================
+# Ernest Haberli - CISO CV (Executive/Strategic Focus)
+# =============================================================================
+# Use for: CISO, Head of Security, Security Director, Security Manager roles
+
+cv:
+  name: Ernest Haberli
+  location: Arbon TG, Switzerland
+  email: ernest.haberli@outlook.com
+  phone: "+41 76 579 7219"
+  social_networks:
+    - network: LinkedIn
+      username: ernesthaberli
+
+  sections:
+    summary:
+      - "Strategic cybersecurity executive with over 30 years of experience in developing
+        and implementing comprehensive information security strategies across global
+        organizations. Proven expertise in establishing robust Information Security
+        Management Systems (ISMS) aligned with ISO 27001 standards, conducting risk
+        assessments, and ensuring business continuity during organizational transformations.
+        Skilled in advising executive management on security matters, managing global
+        security operations, and fostering a strong security culture through effective
+        awareness programs."
+
+    experience:
+      - company: SASOL
+        position: Chief Information Security Officer
+        location: Houston, TX
+        start_date: 2022-01
+        end_date: present
+        highlights:
+          - "Developed and implemented a comprehensive global information security strategy aligned with ISO 27001 standards, resulting in successful certification across all business units"
+          - "Designed and maintained a robust Information Security Management System (ISMS) that effectively balanced security requirements with business objectives"
+          - "Led security integration during major corporate restructuring, harmonizing security policies and processes across newly integrated business units"
+          - "Established a security operations center with 24/7 monitoring capabilities, dramatically reducing incident response times"
+          - "Advised executive management on critical security matters, translating technical risks into business impact assessments"
+          - "Conducted comprehensive risk assessments across global operations, identifying vulnerabilities and implementing mitigation strategies"
+          - "Developed and delivered a comprehensive security awareness program reaching 15,000+ employees globally"
+          - "Conducted regular phishing simulations, achieving a 65% reduction in successful phishing attempts over 18 months"
+          - "Deployed comprehensive endpoint security solutions across 10,000+ endpoints, significantly reducing malware incidents"
+          - "Designed and implemented a zero-trust network architecture, enhancing protection of critical assets and intellectual property"
+
+      - company: Dow Chemicals
+        position: Lead Cyber Security Architect
+        location: Houston, TX
+        start_date: 2014-01
+        end_date: 2022-01
+        highlights:
+          - "Led the development and implementation of information security architecture aligned with ISO 27001 standards"
+          - "Designed and maintained the company's Information Security Management System (ISMS), ensuring alignment with business objectives"
+          - "Developed comprehensive security policies, standards, and procedures supporting the organization's security framework"
+          - "Conducted regular risk assessments of critical IT infrastructure and business applications, implementing appropriate controls"
+          - "Managed incident response for critical security events, ensuring proper containment, eradication, and recovery"
+          - "Designed and deployed multi-layer protection for industrial control systems, addressing unique OT security challenges"
+          - "Maintained security compliance with industry regulations and standards, including ISO 27001 and NIST frameworks"
+          - "Mentored junior security professionals, developing the next generation of security leaders"
+
+      - company: HMHRMA of Harris County
+        position: Senior Network Security Engineer
+        location: Houston, TX
+        start_date: 2013-09
+        end_date: 2013-11
+        highlights:
+          - "Designed and implemented secure network architecture meeting government security requirements"
+          - "Conducted security assessments of network infrastructure, identifying and remediating vulnerabilities"
+          - "Developed network security policies and procedures aligned with compliance requirements"
+
+      - company: Repsol Services
+        position: Systems & Network Engineer
+        location: Houston, TX
+        start_date: 2010-01
+        end_date: 2013-09
+        highlights:
+          - "Implemented secure infrastructure designs for client environments across multiple industries"
+          - "Developed and maintained disaster recovery procedures for critical IT infrastructure"
+          - "Conducted security assessments and remediation for client environments"
+
+    certifications:
+      - label: Certified Information Systems Auditor (CISA)
+        details: "ISACA, 2019"
+      - label: Certified Information Security Manager (CISM)
+        details: "ISACA, 2019"
+      - label: Certified in Risk & Information Systems Control (CRISC)
+        details: "ISACA, 2020"
+      - label: Certified Ethical Hacker (CEH)
+        details: "EC-Council, 2021"
+      - label: Certified Network Defender (CND)
+        details: "EC-Council, 2021"
+      - label: Certified Incident Handler (ECIH)
+        details: "EC-Council, 2021"
+
+    skills:
+      - label: Security Management
+        details: "ISO 27001/2, ISMS, Security Strategy, Risk Management, Business Continuity, Disaster Recovery, Security Governance"
+      - label: Security Operations
+        details: "Incident Management, Vulnerability Management, Penetration Testing, Security Monitoring, Threat Intelligence, Incident Response"
+      - label: Security Architecture
+        details: "Zero Trust, Defense in Depth, Network Segmentation, Cloud Security, IAM, Encryption, Data Loss Prevention"
+      - label: Compliance & Frameworks
+        details: "ISO 27001/2, NIST CSF, GDPR, SOX, PCI DSS, CIS Controls, Audit Management"
+      - label: Leadership
+        details: "Executive Briefings, Security Awareness Programs, Cross-functional Collaboration, Stakeholder Management, Team Building"
+
+    education:
+      - institution: University of Houston
+        area: Computer Science with Security Specialization
+        degree: Master of Science
+        start_date: "1999"
+        end_date: "2001"
+      - institution: UPEL
+        area: Management Information Systems & Security
+        degree: Bachelor's
+        start_date: "1991"
+        end_date: "1995"
+
+    languages:
+      - label: English
+        details: Native/Bilingual
+      - label: Spanish
+        details: Native/Bilingual
+      - label: German
+        details: Professional Working
+
+design:
+  theme: classic

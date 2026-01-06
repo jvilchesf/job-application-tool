@@ -63,7 +63,7 @@ class CVLoader:
         self._cv_data: Optional[CVData] = None
 
     def load(self, path: Optional[Path] = None) -> CVData:
-        """Load CV from YAML file."""
+        """Load CV from YAML file. Supports both legacy and RenderCV formats."""
         path = path or self.cv_path
         if not path:
             raise ValueError("No CV path specified")
@@ -74,7 +74,11 @@ class CVLoader:
         with open(path) as f:
             data = yaml.safe_load(f)
 
-        # Parse personal info
+        # Detect format: RenderCV uses "cv" as root key
+        if "cv" in data:
+            return self._load_rendercv_format(data)
+
+        # Parse personal info (legacy format)
         personal = data.get("personal", {})
 
         # Parse certifications
@@ -121,6 +125,78 @@ class CVLoader:
         )
 
         logger.info(f"Loaded CV for: {self._cv_data.name}")
+        return self._cv_data
+
+    def _load_rendercv_format(self, data: dict) -> CVData:
+        """Load CV from RenderCV YAML format."""
+        cv = data.get("cv", {})
+        sections = cv.get("sections", {})
+
+        # Parse certifications from RenderCV format
+        certifications = [
+            CertificationInfo(
+                name=cert.get("label", ""),
+                issuer=cert.get("details", "").split(",")[0] if cert.get("details") else "",
+                date=cert.get("details", "").split(",")[-1].strip() if cert.get("details") else "",
+            )
+            for cert in sections.get("certifications", [])
+        ]
+
+        # Parse experience from RenderCV format
+        experience = [
+            ExperienceEntry(
+                company=exp.get("company", ""),
+                title=exp.get("position", ""),
+                location=exp.get("location", ""),
+                start_date=str(exp.get("start_date", "")),
+                end_date=str(exp.get("end_date", "")),
+                achievements=exp.get("highlights", []),
+            )
+            for exp in sections.get("experience", [])
+        ]
+
+        # Parse skills into technical_skills dict
+        technical_skills = {}
+        for skill in sections.get("skills", []):
+            label = skill.get("label", "").lower().replace(" ", "_")
+            details = skill.get("details", "")
+            if details:
+                technical_skills[label] = [s.strip() for s in details.split(",")]
+
+        # Parse summary
+        summary_list = sections.get("summary", [])
+        summary = summary_list[0] if summary_list else ""
+
+        # Parse education
+        education = [
+            {
+                "degree": edu.get("degree", edu.get("area", "")),
+                "institution": edu.get("institution", ""),
+                "location": edu.get("location", ""),
+                "years": f"{edu.get('start_date', '')} - {edu.get('end_date', '')}",
+            }
+            for edu in sections.get("education", [])
+        ]
+
+        # Parse languages
+        languages = [
+            {"language": lang.get("label", ""), "proficiency": lang.get("details", "")}
+            for lang in sections.get("languages", [])
+        ]
+
+        self._cv_data = CVData(
+            name=cv.get("name", ""),
+            headline=cv.get("label", ""),  # RenderCV uses 'label' for headline
+            location=cv.get("location", ""),
+            languages=languages,
+            summary=summary,
+            technical_skills=technical_skills,
+            certifications=certifications,
+            experience=experience,
+            education=education,
+        )
+
+        logger.info(f"Loaded CV (RenderCV format) for: {self._cv_data.name}")
         return self._cv_data
 
     @property

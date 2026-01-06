@@ -1,0 +1,122 @@
+# =============================================================================
+# Ernest Haberli - Vulnerability Management Specialist CV (Technical Focus)
+# =============================================================================
+# Use for: Security Engineer, Vulnerability Analyst, Security Analyst, SOC roles
+
+cv:
+  name: Ernest Haberli
+  location: Arbon TG, Switzerland
+  email: ernest.haberli@outlook.com
+  phone: "+41 76 579 7219"
+  social_networks:
+    - network: LinkedIn
+      username: ernesthaberli
+
+  sections:
+    summary:
+      - "Dedicated security professional with extensive experience in vulnerability
+        management, security compliance, and remediation coordination across diverse
+        infrastructure environments. Proven expertise in assessing vulnerabilities,
+        prioritizing remediation efforts, and ensuring compliance with security baselines
+        in Windows Server, Linux, and cloud environments. Strong technical background
+        in security tooling including vulnerability scanners and SIEM platforms, with
+        excellent communication skills for collaborating with infrastructure teams."
+
+    experience:
+      - company: SASOL
+        position: Vulnerability Management Lead
+        location: Houston, TX
+        start_date: 2022-01
+        end_date: present
+        highlights:
+          - "Implemented a comprehensive vulnerability management program using Rapid7 Nexpose, reducing critical vulnerabilities by 65% within six months"
+          - "Established security baseline compliance monitoring across Windows Server, Linux, and Azure environments, achieving 95% compliance rate"
+          - "Deployed Splunk SIEM integration with vulnerability scanners for enhanced risk correlation and prioritization"
+          - "Developed custom dashboards for tracking remediation progress across different infrastructure teams"
+          - "Created a vulnerability management policy and standard operating procedures that formalized assessment and remediation processes"
+          - "Led cross-functional vulnerability review meetings, coordinating remediation efforts across infrastructure and application teams"
+          - "Implemented vulnerability trend analysis that demonstrated 40% year-over-year reduction in high-risk findings"
+          - "Created security baseline templates for Windows Server, Linux, and Azure resources aligned with CIS benchmarks"
+          - "Established formal exception management process to properly document and track necessary deviations from security standards"
+          - "Coordinated remediation efforts with infrastructure teams including Network Operations, Server Administration, and Application Development"
+
+      - company: Dow Chemicals
+        position: Security Compliance Specialist
+        location: Houston, TX
+        start_date: 2014-01
+        end_date: 2022-01
+        highlights:
+          - "Implemented comprehensive security baseline program for Windows and Linux servers based on CIS benchmarks, improving compliance by 70%"
+          - "Established vulnerability scanning processes using multiple scanning tools (Qualys, OpenVAS, Nessus), ensuring complete infrastructure coverage"
+          - "Integrated vulnerability data with internal SIEM solution, enhancing correlation capabilities and improving risk visibility"
+          - "Developed automated compliance reporting that reduced manual effort by 85% while improving data accuracy"
+          - "Created security hardening guidelines for server deployments that were adopted as organizational standards"
+          - "Led cross-team remediation efforts for critical security vulnerabilities affecting enterprise infrastructure"
+          - "Implemented monthly security metrics reporting for executive leadership"
+          - "Conducted regular compliance assessments for critical infrastructure, achieving 98% compliance with internal security standards"
+          - "Developed baseline security configurations for virtual infrastructure environments and containerized workloads"
+          - "Led vulnerability remediation projects during critical security incidents, ensuring timely risk mitigation"
+
+      - company: HMHRMA of Harris County
+        position: Network Security Engineer
+        location: Houston, TX
+        start_date: 2013-09
+        end_date: 2013-11
+        highlights:
+          - "Conducted security assessments of network infrastructure, identifying and documenting vulnerabilities"
+          - "Implemented security baseline configurations for network devices based on industry best practices"
+          - "Coordinated remediation efforts with network teams to address identified security gaps"
+          - "Performed compliance checks against security policies and regulatory requirements"
+
+      - company: Repsol Services
+        position: Systems & Network Engineer
+        location: Houston, TX
+        start_date: 2010-01
+        end_date: 2013-09
+        highlights:
+          - "Implemented security patches and configuration changes to address identified vulnerabilities"
+          - "Conducted regular security reviews of server and network infrastructure"
+          - "Developed and maintained server hardening standards for Windows and Linux environments"
+          - "Implemented monitoring solutions to detect security anomalies and potential vulnerabilities"
+
+    certifications:
+      - label: Certified Ethical Hacker (CEH)
+        details: "EC-Council, 2021"
+      - label: Certified Network Defender (CND)
+        details: "EC-Council, 2021"
+      - label: Certified Incident Handler (ECIH)
+        details: "EC-Council, 2021"
+      - label: Azure Solutions Architect
+        details: "Microsoft, 2022"
+
+    skills:
+      - label: Vulnerability Management
+        details: "Rapid7 Nexpose, Qualys, Nessus, OpenVAS, Metasploit, Vulnerability Prioritization, Remediation Planning, Exception Management"
+      - label: Security Compliance
+        details: "CIS Benchmarks, Security Baseline Implementation, Compliance Monitoring, Configuration Management, Hardening Standards"
+      - label: Operating Systems
+        details: "Windows Server, Linux (RHEL, Ubuntu, CentOS), Virtualization (VMware, Hyper-V), Container Technologies, Patch Management"
+      - label: Cloud Security
+        details: "Azure Security Center, Cloud Infrastructure Security, IaaS/PaaS Security, Cloud Compliance Monitoring"
+      - label: Security Tools
+        details: "Splunk SIEM, Security Log Analysis, SOAR Platforms, Automated Security Testing, Security Dashboards"
+      - label: Networking
+        details: "Cisco Network Security, Firewall Configuration, Network Segmentation, VPN Security, Network Protocol Analysis"
+
+    education:
+      - institution: UPEL
+        area: Management Information Systems & Security
+        degree: Bachelor's
+        start_date: "1991"
+        end_date: "1995"
+
+    languages:
+      - label: English
+        details: Native/Bilingual
+      - label: Spanish
+        details: Native/Bilingual
+      - label: German
+        details: Professional Working
+
+design:
+  theme: classic
